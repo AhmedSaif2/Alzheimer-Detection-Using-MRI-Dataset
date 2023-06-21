@@ -1,0 +1,12 @@
+/* Medium Screen */
+@media (max-width: 1000px) {
+    .nav_items,.intro_image{
+      display: none;
+    }
+    .intro_text{
+        width: 100%;
+    }
+    .dropdown{
+        display: block;
+    }
+}

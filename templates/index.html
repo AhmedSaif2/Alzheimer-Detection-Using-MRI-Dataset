@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/responsive.css') }}">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body >
+    <header class="container">
+        <div class="logo" >
+            <i class="fa-solid fa-brain"></i>
+            Alzheimer's Detection
+        </div>
+        <nav >
+            <div class="nav_items">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#samples">Samples</a></li>
+                    <li><a href="#trynow">Try Now!</a></li>
+                </ul>
+            </div>
+            <div class="dropdown"> <i class="fa-solid fa-bars"></i></div>
+        </nav>
+    </header>
+    
+    <section class="intro container">
+        <div class="intro_text">
+            <h1>What is Alzheimer's disease?</h1>
+            <p>Alzheimer's disease is a brain disorder that gets worse over time. It's characterized by changes in the brain that lead to deposits of certain proteins. Alzheimer's disease causes the brain to shrink and brain cells to eventually die. Alzheimer's disease is the most common cause of dementia — a gradual decline in memory, thinking, behavior and social skills. These changes affect a person's ability to function.</p>
+        </div>
+        <div class="intro_image">
+            <img src="static/images/alzheimer_illustration.jpg" alt="alzheimer illustration">
+        </div>
+    </section>
+
+    <section class="tool container">
+        <h1>How can this tool help?</h1>
+        <p>This tool can help healthcare professionals and researchers to quickly and accurately diagnose Alzheimer's disease in patients. By analyzing MRI images of the brain, the model can determine the stage of the disease and provide valuable insights into the progression of the condition.</p>
+    </section>
+
+    <section class="samples container" id="samples">
+        <h1>Here Are Some Samples</h1>
+        <div class="sample-cards">
+            <div class="card">
+                <img src="static/images/normal.jpg" alt="MRI scan of a normal person">
+                <div class="caption">MRI scan of a normal person</div>
+            </div>
+            <div class="card">
+                <img src="static/images/verymild.jpg" alt="MRI scan of a patient with very-mild Alzheimer's disease">
+                <div class="caption">MRI scan of a patient with very-mild Alzheimer's disease</div>
+            </div>
+            <div class="card">
+                <img src="static/images/mild.jpg" alt="MRI scan of a patient with mild Alzheimer's disease">
+                <div class="caption">MRI scan of a patient with mild Alzheimer's disease</div>
+
+            </div>
+            <div class="card">
+                <img src="static/images/moderate.jpg" alt="MRI scan of a patient with moderate Alzheimer's disease">
+                <div class="caption">MRI scan of a patient with moderate Alzheimer's disease</div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="trynow container" id="trynow">
+        <h1>Try Now!</h1>
+        <div class="Upload">
+            <h2>Upload an image:</h2>
+            <form id="predict-form" method="post" enctype="multipart/form-data">
+                <input class="choose-file" id="image-input" type="file" name="imageFile" required>
+                <button type="submit">Predict</button>
+                <div class="result">
+                    <div class="image-container">
+                        <img id="image-preview" src="#" alt="Uploaded Image" style="display:none;max-width:300px;max-height:300px;">
+                    </div>
+                    <div class="prediction" id="prediction"></div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="footer container">
+        <ul>
+            <li><a href="https://www.facebook.com/ahmed.saif.9210"><i class="fa-brands fa-facebook"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/ahmedsaif10/"><i class="fa-brands fa-linkedin"></i></a></li>
+            <li><a href="mailto:ahmedmohammedsaif1@gmail.com"><i class="fa-solid fa-envelope"></i></a></li>
+        </ul>
+        <p>© 2023 Alzheimer's Detection</p>
+    </section>
+
+    <script>
+            $(document).ready(function() {
+                $("#image-input").change(function(){
+                    if(this.files && this.files[0]){
+                        var reader = new FileReader();
+                        reader.onload = function(e){
+                            $('#image-preview').attr('src', e.target.result);
+                            $('#image-preview').show();
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+
+                $('form').submit(function(event) {
+                    event.preventDefault(); // Prevent the form from being submitted and the page from reloading
+                    var form_data = new FormData($('form')[0]);
+                    $.ajax({
+                        type: 'POST',
+                        url:'/predict',
+                        data: form_data,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        async: true,
+                        success: function(data) {
+                            $('#prediction').html('<p> Classification: ' + data + '</p>');
+                        },
+                    });
+                });
+            });
+        </script>
+
+</body>
+</html>

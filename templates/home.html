@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Alzheimer's Disease Classifier</title>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            h1 {
+                text-align: center;
+                font-size: 36px;
+                color: #4d4d4d;
+            }
+
+            h2 {
+                font-size: 24px;
+                color: #4d4d4d;
+            }
+
+            p {
+                font-size: 18px;
+                color: #4d4d4d;
+            }
+
+            form {
+                width: 98%;
+                padding: 1% 1%;
+                border: 2px solid #4d4d4d;
+                border-radius: 5px;
+                background-color: #f8f8f8;
+            }
+            .sample-images{
+                display:flex;
+                justify-content:space-around;
+            }
+            .image-container {
+                display: inline-block;
+                text-align: center;
+                vertical-align: top;
+                width:25%;
+            }
+
+            img {
+                margin: 0 auto;
+                max-width: 100%;
+            }
+
+            .result{
+                display:flex;
+                margin-top:2%;
+                align-items:center;
+            }
+            .result .image-container{
+                text-align:left;
+            }
+            .caption {
+                font-size: 16px;
+                color: #666;
+                margin-top: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Alzheimer's Disease Classifier</h1>
+        </header>
+        <section>
+            <h2>What is Alzheimer's disease?</h2>
+            <p>Alzheimer's disease is a progressive neurodegenerative disorder that affects millions of people worldwide. It is the most common cause of dementia in older adults and is characterized by the gradual loss of cognitive function and memory.</p>
+        </section>
+
+        <section>
+            <h2>How can this tool help?</h2>
+            <p>This tool can help healthcare professionals and researchers to quickly and accurately diagnose Alzheimer's disease in patients. By analyzing MRI images of the brain, the model can determine the stage of the disease and provide valuable insights into the progression of the condition.</p>
+        </section>
+
+         <section >
+            <h2>Sample Images</h2>
+             <div class="sample-images">
+                 <div class="image-container">
+                    <img src="static/images/nondemented.jpg" alt="Severe Alzheimer's Disease">
+                    <div class="caption">MRI scan of a normal person</div>
+                </div>
+                 <div class="image-container">
+                    <img src="static/images/very-mild.jpg" alt="Mild Alzheimer's Disease">
+                    <div class="caption">MRI scan of a patient with very-mild Alzheimer's disease</div>
+                </div>
+                <div class="image-container">
+                    <img src="static/images/mild.jpg" alt="Mild Alzheimer's Disease">
+                    <div class="caption">MRI scan of a patient with mild Alzheimer's disease</div>
+                </div>
+                <div class="image-container">
+                    <img src="static/images/moderate.jpg" alt="Moderate Alzheimer's Disease">
+                    <div class="caption">MRI scan of a patient with moderate Alzheimer's disease</div>
+                </div>
+
+             </div>
+        </section>
+
+        <section>
+            <h2>Upload an Image</h2>
+            <form id="predict-form" method="post" enctype="multipart/form-data">
+                <input id="image-input" type="file" name="imageFile" required>
+                <button type="submit">Predict</button>
+            </form>
+            <div class="result">
+                <div class="image-container">
+                    <img id="image-preview" src="#" alt="Uploaded Image" style="display:none;max-width:300px;max-height:300px;">
+                </div>
+                <div class="prediction" id="prediction"></div>
+            </div>
+        </section>
+
+        <script>
+            $(document).ready(function() {
+                $("#image-input").change(function(){
+                    if(this.files && this.files[0]){
+                        var reader = new FileReader();
+                        reader.onload = function(e){
+                            $('#image-preview').attr('src', e.target.result);
+                            $('#image-preview').show();
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+
+                $('form').submit(function(event) {
+                    event.preventDefault(); // Prevent the form from being submitted and the page from reloading
+                    var form_data = new FormData($('form')[0]);
+                    $.ajax({
+                        type: 'POST',
+                        url:'/predict',
+                        data: form_data,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        async: true,
+                        success: function(data) {
+                            $('#prediction').html('<p>' + data + '</p>');
+                        },
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
