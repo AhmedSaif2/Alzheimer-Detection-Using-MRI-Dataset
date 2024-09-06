@@ -8,7 +8,7 @@ import cv2
 
 
 app=Flask(__name__)
-model = load_model('vgg19_epochs30_testacc98.h5')
+model = load_model('model.h5')
 
 def read_image(filename):
     dim = 150
